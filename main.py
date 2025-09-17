@@ -51,4 +51,28 @@ def create_users(body: User):
         """
     )
 
+@router.get("/users/{id_users}")
+def get_user_by_id(id_users: int):
+    result = run_sql(f"SELECT * FROM users WHERE id_users = {id_users}")
+    if result:
+        return result[0]  # Retorna o usuário
+    return {"error": "Usuário não encontrado"}  # Caso não exista um usuário
+
+@router.put("/users/{id_users}")
+def update_user(id_users: int, body: User):
+    password_users, name_users, email_users = body.password_users, body.name_users, body.email_users
+    run_sql(
+        f"""
+        UPDATE users
+        SET password_users = '{password_users}', name_users = '{name_users}', email_users = '{email_users}'
+        WHERE id_users = {id_users}
+        """
+    )
+    return {"message": "Usuário atualizado"}
+
+@router.delete("/users/{id_users}")
+def delete_user(id_users: int):
+    run_sql(f"DELETE FROM users WHERE id_users = {id_users}")
+    return {"message": "Usuário deletado"}
+
 app.include_router(router=router)
